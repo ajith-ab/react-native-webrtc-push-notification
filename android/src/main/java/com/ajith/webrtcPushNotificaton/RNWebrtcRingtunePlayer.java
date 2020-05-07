@@ -1,0 +1,75 @@
+package com.ajith.webrtcPushNotificaton;
+
+import android.content.Context;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.util.Log;
+
+import com.facebook.react.bridge.ReadableMap;
+
+public class RNWebrtcRingtunePlayer {
+
+    private static RNWebrtcRingtunePlayer sInstance;
+    private Context mContext;
+    private MediaPlayer mMediaPlayer;
+
+    public RNWebrtcRingtunePlayer(Context context) {
+        mContext = context;
+    }
+
+    public static RNWebrtcRingtunePlayer getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new RNWebrtcRingtunePlayer(context);
+        }
+        return sInstance;
+    }
+
+    public void playMusic(ReadableMap jsonObject) {
+        String fileName = jsonObject.getString("ringtune");
+        int resId;
+        Uri sounduri;
+        try{
+            resId = mContext.getResources().getIdentifier(fileName, "raw", mContext.getPackageName());
+            if(resId != 0){
+                sounduri = Uri.parse("android.resource://" + mContext.getPackageName() + "/"+resId);
+            }else {
+                sounduri = Uri.parse("android.resource://" + mContext.getPackageName() + "/"+ R.raw.ringtune);
+            }
+
+        }catch (Exception e){
+            sounduri = Uri.parse("android.resource://" + mContext.getPackageName() + "/"+ R.raw.ringtune);
+        }
+
+        mMediaPlayer = MediaPlayer.create(mContext, sounduri);
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
+        cancelWithTimeOut(jsonObject);
+    }
+
+    public void cancelWithTimeOut(ReadableMap jsonObject){
+        int duration = jsonObject.getInt("duration");
+        final ReadableMap json = jsonObject;
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                       if(mMediaPlayer.isPlaying()) {
+                           Intent intent = new Intent(mContext, RNWebrtcBroadcastReciever.class);
+                           intent.setAction("callTimeOut");
+                           intent.putExtra("callerId", json.getString("callerId"));
+                           intent.putExtra("missedCallTitle", json.getString("missedCallTitle"));
+                           intent.putExtra("missedCallBody", json.getString("missedCallBody"));
+                           mContext.sendBroadcast(intent);
+                           stopMusic();
+                       }
+                    }
+                }, duration);
+    }
+
+    public void stopMusic() {
+        if(mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.seekTo(0);
+        }
+    }
+}
