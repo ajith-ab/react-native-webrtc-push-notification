@@ -38,9 +38,8 @@ public class RNWebrtcPushNotificationModule extends ReactContextBaseJavaModule i
     Application applicationContext = (Application) reactContext.getApplicationContext();
     rnWebrtcNotificationHelper = new RNWebrtcNotificationHelper(applicationContext);
     sendjsData = new RNWebrtcsSendData(reactContext);
+
   }
-
-
   @Override
   public String getName() {
     return "RNWebrtcPushNotification";
@@ -54,15 +53,32 @@ public class RNWebrtcPushNotificationModule extends ReactContextBaseJavaModule i
     rnWebrtcNotificationHelper.sendCallNotification(data);
   }
 
-
   @ReactMethod
   public  void clearNotificationById(int id){
     rnWebrtcNotificationHelper.clearNotification(id);
   }
 
   @ReactMethod
-  public  void  sendMissedCallNotification(){
-    rnWebrtcNotificationHelper.showMissCallNotification("adas","asdasd", "asdsd");
-    Log.i(LogTag, "Missed Call");
+  public void clearAllNotifications(){
+    rnWebrtcNotificationHelper.clearAllNorifications();
+  }
+
+
+
+  @ReactMethod
+  public void playRingtune(String fileName, Boolean isLooping){
+    RNWebrtcRingtunePlayer.getInstance(reactContext).playRingtune(fileName, isLooping);
+  }
+
+  @ReactMethod
+  public void  stopRingtune(){
+    RNWebrtcRingtunePlayer.getInstance(reactContext).stopMusic();
+  }
+
+
+
+  @ReactMethod
+  public  void  showMissedCallNotification(String title, String body, String callerId){
+    rnWebrtcNotificationHelper.showMissCallNotification(title,body, callerId);
   }
 }

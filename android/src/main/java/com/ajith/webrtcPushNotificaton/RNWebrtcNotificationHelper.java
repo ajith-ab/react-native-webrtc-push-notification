@@ -144,17 +144,17 @@ public class RNWebrtcNotificationHelper {
     }
 
 
-   public void createNotificationChannel(NotificationManager manager , Uri sounduri){
-       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           NotificationChannel channel = new NotificationChannel(notificationChannel, "missed call", NotificationManager.IMPORTANCE_HIGH);
-           channel.setDescription("Call Notifications");
-           channel.setSound(sounduri ,
-                   new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                           .setUsage(AudioAttributes.USAGE_UNKNOWN).build());
-           channel.setVibrationPattern(new long[]{0, 1000});
-           channel.enableVibration(true);
-           manager.createNotificationChannel(channel);
-       }
+    public void createNotificationChannel(NotificationManager manager , Uri sounduri){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(notificationChannel, "missed call", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Call Notifications");
+            channel.setSound(sounduri ,
+                    new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setUsage(AudioAttributes.USAGE_UNKNOWN).build());
+            channel.setVibrationPattern(new long[]{0, 1000});
+            channel.enableVibration(true);
+            manager.createNotificationChannel(channel);
+        }
     }
 
 
@@ -163,6 +163,12 @@ public class RNWebrtcNotificationHelper {
     public void clearNotification(int notificationID) {
         NotificationManager notificationManager = notificationManager();
         notificationManager.cancel(notificationID);
+    }
+
+
+    public void clearAllNorifications(){
+        NotificationManager manager = notificationManager();
+        manager.cancelAll();
     }
 
 

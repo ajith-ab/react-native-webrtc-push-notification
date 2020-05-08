@@ -27,6 +27,15 @@ public class RNWebrtcRingtunePlayer {
 
     public void playMusic(ReadableMap jsonObject) {
         String fileName = jsonObject.getString("ringtune");
+        notificationRingtune(fileName);
+        mMediaPlayer.setLooping(true);
+        if(!mMediaPlayer.isPlaying()){
+            mMediaPlayer.start();
+            cancelWithTimeOut(jsonObject);
+        }
+    }
+
+    public void notificationRingtune(String fileName){
         int resId;
         Uri sounduri;
         try{
@@ -42,9 +51,17 @@ public class RNWebrtcRingtunePlayer {
         }
 
         mMediaPlayer = MediaPlayer.create(mContext, sounduri);
-        mMediaPlayer.setLooping(true);
-        mMediaPlayer.start();
-        cancelWithTimeOut(jsonObject);
+
+    }
+
+
+
+    public void playRingtune(String fileName,Boolean isLooping){
+        notificationRingtune(fileName);
+        if(!mMediaPlayer.isPlaying()){
+            mMediaPlayer.setLooping(isLooping);
+            mMediaPlayer.start();
+        }
     }
 
     public void cancelWithTimeOut(ReadableMap jsonObject){
@@ -53,15 +70,15 @@ public class RNWebrtcRingtunePlayer {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                       if(mMediaPlayer.isPlaying()) {
-                           Intent intent = new Intent(mContext, RNWebrtcBroadcastReciever.class);
-                           intent.setAction("callTimeOut");
-                           intent.putExtra("callerId", json.getString("callerId"));
-                           intent.putExtra("missedCallTitle", json.getString("missedCallTitle"));
-                           intent.putExtra("missedCallBody", json.getString("missedCallBody"));
-                           mContext.sendBroadcast(intent);
-                           stopMusic();
-                       }
+                        if(mMediaPlayer.isPlaying()) {
+                            Intent intent = new Intent(mContext, RNWebrtcBroadcastReciever.class);
+                            intent.setAction("callTimeOut");
+                            intent.putExtra("callerId", json.getString("callerId"));
+                            intent.putExtra("missedCallTitle", json.getString("missedCallTitle"));
+                            intent.putExtra("missedCallBody", json.getString("missedCallBody"));
+                            mContext.sendBroadcast(intent);
+                            stopMusic();
+                        }
                     }
                 }, duration);
     }
