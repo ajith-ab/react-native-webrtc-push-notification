@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   RNWebrtcPushNotification
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/ajith-ab/react-native-webrtc-push-notification/blob/master/README.md"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "author" => "author@domain.cn" }
@@ -20,5 +20,3 @@ Pod::Spec.new do |s|
   #s.dependency "others"
 
 end
-
-  

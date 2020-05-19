@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -22,7 +23,7 @@ public class RNWebrtcPushNotificationModule extends ReactContextBaseJavaModule i
 
   @Override
   public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
-
+    sendjsData.sentEventToJsModule(intent);
   }
 
   @Override
@@ -38,14 +39,12 @@ public class RNWebrtcPushNotificationModule extends ReactContextBaseJavaModule i
     Application applicationContext = (Application) reactContext.getApplicationContext();
     rnWebrtcNotificationHelper = new RNWebrtcNotificationHelper(applicationContext);
     sendjsData = new RNWebrtcsSendData(reactContext);
-
   }
+
   @Override
   public String getName() {
     return "RNWebrtcPushNotification";
   }
-
-
 
   @ReactMethod
   public void showCallNotification(ReadableMap jsonObject){
@@ -63,6 +62,13 @@ public class RNWebrtcPushNotificationModule extends ReactContextBaseJavaModule i
     rnWebrtcNotificationHelper.clearAllNorifications();
   }
 
+
+  @ReactMethod
+  public void getInitialNotificationActions(Promise promise) {
+    Activity activity = getCurrentActivity();
+    Intent intent = activity.getIntent();
+    sendjsData.sendIntilialData(promise,intent);
+  }
 
 
   @ReactMethod
